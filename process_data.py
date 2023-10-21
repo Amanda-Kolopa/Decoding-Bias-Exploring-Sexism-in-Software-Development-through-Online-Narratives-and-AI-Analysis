@@ -35,9 +35,11 @@ MG_keywords = ['moralism', 'puritanism', 'prudery', 'morality', 'prudishness', '
 sentiment_analyzer = SentimentIntensityAnalyzer()
 lemmatizer = WordNetLemmatizer()
 
+
 # Load CSV file, perform sentiment analysis with NLTK stopwords,
 # and append results as new columns
 def clean_text(text):
+    # TODO: add other ways to clean the text (look at notebook)
     # Remove emojis using regular expression
     emoji_pattern = re.compile("["
                                "\U0001F600-\U0001F64F"  # Emoticons
@@ -66,7 +68,7 @@ def analyze_text_and_append(csv_file, output_csv_file):
     with open(csv_file, 'r', encoding='utf-8', errors='replace') as infile, \
             open(output_csv_file, 'w', newline='', encoding='utf-8') as outfile:
         reader = csv.DictReader(infile)
-        #TODO: input headers
+        #TODO: update headers
         fieldnames = reader.fieldnames + ['Filtered Text', 'Word2Vec Embeddings', 'Sentiment', 'Subjectivity', 'Readability']
         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
         writer.writeheader()
@@ -74,7 +76,7 @@ def analyze_text_and_append(csv_file, output_csv_file):
         lemmatized_documents = []
         counter = 1
         for row in reader:
-            text = row['content']  # Extract the 'Text' column value
+            text = row['Text']  # Extract the 'Text' column value
 
             #########~~~ Part 1: Remove Stopwords and Clean Text ~~~#########
             # Clean the text from emojis and special characters
@@ -83,6 +85,7 @@ def analyze_text_and_append(csv_file, output_csv_file):
             # Tokenize the cleaned text and remove stopwords
             tokens = [word for word in TextBlob(cleaned_text).words if word.lower() not in stop_words]
 
+            # TODO: fix as it outputs {} each time
             #########~~~ Part 2: Word2Vec ~~~#########
             word2vec_model = Word2Vec(tokens, vector_size=100, window=5, min_count=1, workers=4)
 
@@ -97,7 +100,8 @@ def analyze_text_and_append(csv_file, output_csv_file):
             filtered_text = " ".join(tokens)
             row['Filtered Text'] = filtered_text
 
-            scores = sentiment_analyzer.polarity_scores(cleaned_text)
+            # TODO: compare the results when using clean_text (done) and text
+            scores = sentiment_analyzer.polarity_scores(text)
             if scores['compound'] > 0:
                 row['Subjectivity'] = 'Subjective'
                 if scores['pos'] > scores['neg']:
@@ -105,6 +109,7 @@ def analyze_text_and_append(csv_file, output_csv_file):
                 else:
                     row['Sentiment'] = "Negative"
             else:
+                row['Sentiment'] = "Neutral"
                 row['Subjectivity'] = 'Objective'
 
             # Perform sentiment analysis on the filtered tokens
@@ -121,7 +126,6 @@ def analyze_text_and_append(csv_file, output_csv_file):
             row['Readability'] = textstat.flesch_reading_ease(text)
 
             #########~~~ Part 5a: Lemmonize Text ~~~#########
-
             lemmatized_text = [lemmatizer.lemmatize(word, pos='v') for word in text if word.isalpha()]
             lemmatized_documents.append(lemmatized_text)
 
