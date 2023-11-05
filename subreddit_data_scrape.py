@@ -255,7 +255,7 @@ csv_headers = ['SubReddit', 'Hot or Top', 'Scraped Date', 'Posted Date', 'Posted
 # Saves the scraped data to a csv file
 # TODO: add the path to where you would like the scraped data to be stored
 with open(
-        'C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/hot_top_new_2000.csv',
+        'C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/OG_hot_top_new_2000.csv',
         'w', newline='', encoding="utf-8") as f:
     write = csv.writer(f)
     write.writerow(csv_headers)
