@@ -144,7 +144,7 @@ def clean_text(text):
 
 # Read CSV file
 df = pd.read_csv(
-    'C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/testimonial injustice.csv',
+    'C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/cleaned text data files/testimonial injustice.csv',
     encoding="utf-8")
 
 # Clean 'Text' column
@@ -175,100 +175,100 @@ cleaned_text = df['Cleaned Text']
 X = vectorizer.fit_transform(cleaned_text)
 
 # Use the Elbow Method to determine the optimal number of clusters
-sse = {}
-for k in range(2, 100):
-    kmeans = KMeans(n_clusters=k, max_iter=1000).fit(X)
-    sse[k] = kmeans.inertia_
-
-plt.figure()
-plt.plot(list(sse.keys()), list(sse.values()))
-plt.xlabel("Number of clusters")
-plt.ylabel("SSE")
-plt.title("Elbow Method For Optimal k")
-plt.show()
-
-# Use the Silhouette Coefficient Method to determine the optimal number of clusters
-sil = []
-for k in range(2, 100):
-    kmeans = KMeans(n_clusters=k).fit(X)
-    preds = kmeans.fit_predict(X)
-    sil.append(silhouette_score(X, preds, metric='euclidean'))
-
-plt.figure()
-plt.plot(range(2, 100), sil, 'bx-')
-plt.title('Silhouette Method For Optimal k')
-plt.xlabel('Number of clusters')
-plt.ylabel('Silhouette Score')
-plt.show()
-
-# Calculate Calinski-Harabasz index for each k value
-ch_scores = []
-for k in range(2, 100):
-    kmeans = KMeans(n_clusters=k, random_state=42).fit(X)
-    ch_scores.append(calinski_harabasz_score(X.toarray(), kmeans.labels_))
-
-plt.figure()
-plt.plot(range(2, 100), ch_scores, 'bx-')
-plt.title('Calinski-Harabasz For Optimal k')
-plt.xlabel('Number of clusters')
-plt.ylabel('Calinski-Harabasz Score')
-plt.show()
-
-# Calculate Davies-Bouldin index for each k value
-db_scores = []
-for k in range(2, 100):
-    kmeans = KMeans(n_clusters=k, random_state=42).fit(X)
-    db_scores.append(davies_bouldin_score(X.toarray(), kmeans.labels_))
-
-plt.figure()
-plt.plot(range(2, 100), db_scores, 'bx-')
-plt.title('Davies-Bouldin For Optimal k')
-plt.xlabel('Number of clusters')
-plt.ylabel('Davies-Bouldin Score')
-plt.show()
-
-
-# # Add the cluster labels to the original DataFrame
-# kmeans = KMeans(n_clusters=15, max_iter=1000).fit(X)
+# sse = {}
+# for k in range(2, 100):
+#     kmeans = KMeans(n_clusters=k, max_iter=1000).fit(X)
+#     sse[k] = kmeans.inertia_
 #
-# # Extract the top 10 words for each cluster
-# order_centroids = kmeans.cluster_centers_.argsort()[:, ::-1]
-# terms = vectorizer.get_feature_names_out()
-# top_words = []
-# for i in range(15):
-#     top_words.append([terms[ind] for ind in order_centroids[i, :10]])
+# plt.figure()
+# plt.plot(list(sse.keys()), list(sse.values()))
+# plt.xlabel("Number of clusters")
+# plt.ylabel("SSE")
+# plt.title("Elbow Method For Optimal k")
+# plt.show()
 #
-# # Apply LDA to extract topics from the text data
-# lda = LatentDirichletAllocation(n_components=15, random_state=0)
-# lda.fit(X)
+# # Use the Silhouette Coefficient Method to determine the optimal number of clusters
+# sil = []
+# for k in range(2, 100):
+#     kmeans = KMeans(n_clusters=k).fit(X)
+#     preds = kmeans.fit_predict(X)
+#     sil.append(silhouette_score(X, preds, metric='euclidean'))
 #
-# # Extract the top 10 words for each topic
-# order_topics = lda.components_.argsort()[:, ::-1]
-# top_topics = []
-# for i in range(15):
-#     top_topics.append([terms[ind] for ind in order_topics[i, :10]])
+# plt.figure()
+# plt.plot(range(2, 100), sil, 'bx-')
+# plt.title('Silhouette Method For Optimal k')
+# plt.xlabel('Number of clusters')
+# plt.ylabel('Silhouette Score')
+# plt.show()
 #
-# # Create a new DataFrame with the same format as the original DataFrame, but with the Cluster ID and Topic ID columns added
-# new_df = pd.DataFrame({'Cleaned Text': cleaned_text, 'Cluster ID': kmeans.labels_})
+# # Calculate Calinski-Harabasz index for each k value
+# ch_scores = []
+# for k in range(2, 100):
+#     kmeans = KMeans(n_clusters=k, random_state=42).fit(X)
+#     ch_scores.append(calinski_harabasz_score(X.toarray(), kmeans.labels_))
 #
-# # Merge the new DataFrame with the original DataFrame on the 'Post Title' column
-# merged_df = pd.merge(df, new_df, on='Cleaned Text')
+# plt.figure()
+# plt.plot(range(2, 100), ch_scores, 'bx-')
+# plt.title('Calinski-Harabasz For Optimal k')
+# plt.xlabel('Number of clusters')
+# plt.ylabel('Calinski-Harabasz Score')
+# plt.show()
 #
-# # Extract the top 10 topics for each cluster
-# cluster_topics = []
-# for i in range(15):
-#     cluster_df = merged_df[merged_df['Cluster ID'] == i]
-#     cluster_X = vectorizer.transform(cluster_df['Cleaned Text'])
-#     cluster_lda = lda.transform(cluster_X)
-#     order_cluster_topics = cluster_lda.argsort()[:, ::-1]
-#     top_cluster_topics = []
-#     for j in range(15):
-#         top_cluster_topics.append([terms[ind] for ind in order_cluster_topics[j, :10]])
-#     cluster_topics.append(top_cluster_topics)
+# # Calculate Davies-Bouldin index for each k value
+# db_scores = []
+# for k in range(2, 100):
+#     kmeans = KMeans(n_clusters=k, random_state=42).fit(X)
+#     db_scores.append(davies_bouldin_score(X.toarray(), kmeans.labels_))
 #
-# # Add the top 10 words for each cluster to the merged DataFrame
-# for i in range(15):
-#     merged_df.loc[merged_df['Cluster ID'] == i, 'Top Words'] = ', '.join(top_words[i])
-#
-# # Save the merged DataFrame to a new CSV file
-# merged_df.to_csv('C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/text_tfidf_kmeans_optimization.csv', index=False)
+# plt.figure()
+# plt.plot(range(2, 100), db_scores, 'bx-')
+# plt.title('Davies-Bouldin For Optimal k')
+# plt.xlabel('Number of clusters')
+# plt.ylabel('Davies-Bouldin Score')
+# plt.show()
+
+
+# Add the cluster labels to the original DataFrame
+kmeans = KMeans(n_clusters=17, max_iter=1000).fit(X)
+
+# Extract the top 10 words for each cluster
+order_centroids = kmeans.cluster_centers_.argsort()[:, ::-1]
+terms = vectorizer.get_feature_names_out()
+top_words = []
+for i in range(17):
+    top_words.append([terms[ind] for ind in order_centroids[i, :10]])
+
+# Apply LDA to extract topics from the text data
+lda = LatentDirichletAllocation(n_components=17, random_state=0)
+lda.fit(X)
+
+# Extract the top 10 words for each topic
+order_topics = lda.components_.argsort()[:, ::-1]
+top_topics = []
+for i in range(17):
+    top_topics.append([terms[ind] for ind in order_topics[i, :10]])
+
+# Create a new DataFrame with the same format as the original DataFrame, but with the Cluster ID and Topic ID columns added
+new_df = pd.DataFrame({'Cleaned Text': cleaned_text, 'Cluster ID': kmeans.labels_})
+
+# Merge the new DataFrame with the original DataFrame on the 'Post Title' column
+merged_df = pd.merge(df, new_df, on='Cleaned Text')
+
+# Extract the top 10 topics for each cluster
+cluster_topics = []
+for i in range(17):
+    cluster_df = merged_df[merged_df['Cluster ID'] == i]
+    cluster_X = vectorizer.transform(cluster_df['Cleaned Text'])
+    cluster_lda = lda.transform(cluster_X)
+    order_cluster_topics = cluster_lda.argsort()[:, ::-1]
+    top_cluster_topics = []
+    for j in range(17):
+        top_cluster_topics.append([terms[ind] for ind in order_cluster_topics[j, :10]])
+    cluster_topics.append(top_cluster_topics)
+
+# Add the top 10 words for each cluster to the merged DataFrame
+for i in range(17):
+    merged_df.loc[merged_df['Cluster ID'] == i, 'Top Words'] = ', '.join(top_words[i])
+
+# Save the merged DataFrame to a new CSV file
+merged_df.to_csv('C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/A3_text_tfidf_kmeans_optimization.csv', index=False)
