@@ -14,7 +14,7 @@ Aspects to consider:
 	- Traditional approach used in several papers
 	- [DONE in A5]
 
-- TFIDF+Kmeans+CMT without keywords guidance (just applied to text)
+- TFIDF+Kmeans+CTM without keywords guidance (just applied to text)
 	- Traditional approach used in several papers
 	- CMT is an extension of LDA (could compare potential improvements)
 
@@ -22,7 +22,7 @@ Aspects to consider:
 	- Traditional approach used in several papers
 	- 
 
-- TFIDF+Bottom-Up Hierarchical Clustering+CMT without keywords guidance (just applied to text)
+- TFIDF+Bottom-Up Hierarchical Clustering+CTM without keywords guidance (just applied to text)
 	- Traditional approach used in several papers
 	- CMT is an extension of LDA (could compare potential improvements)
 

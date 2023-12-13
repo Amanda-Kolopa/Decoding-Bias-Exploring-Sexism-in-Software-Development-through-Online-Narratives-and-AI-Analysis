@@ -237,7 +237,7 @@ for i in range(25):
 # Create a new DataFrame with the same format as the original DataFrame, but with the Cluster ID and Topic ID columns added
 new_df = pd.DataFrame({'Text': df['Text'], 'New Cleaned Text': cleaned_text, 'Cluster ID': kmeans.labels_})
 
-# Merge the new DataFrame with the original DataFrame on the 'Post Title' column
+# Merge the new DataFrame with the original DataFrame on the 'Text' column
 merged_df = pd.merge(df, new_df, on='Text')
 
 # Extract the top 5 topics for each cluster
@@ -252,7 +252,7 @@ for i in range(25):
         top_cluster_topics.append([terms[ind] for ind in order_cluster_topics[j, :5]])
     cluster_topics.append(top_cluster_topics)
 
-# Add the top 10 words for each cluster to the merged DataFrame
+# Add the top 5 words for each cluster to the merged DataFrame
 for i in range(25):
     merged_df.loc[merged_df['Cluster ID'] == i, 'Top Words'] = ', '.join(top_words[i])
 
