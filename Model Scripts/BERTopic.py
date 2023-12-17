@@ -154,7 +154,7 @@ df = pd.read_csv(
 # Create a CountVectorizer object to generate word embeddings using keywords!
 vectorizer = CountVectorizer(stop_words='english', vocabulary=categories['testimonial injustice'])
 
-X = [str(d) for d in df['Text'].apply(clean_text)]
+# X = [str(d) for d in df['Text'].apply(clean_text)]
 
 # cleaned_text = df['Text'].apply(clean_text)
 X = df['Text'].apply(clean_text)
