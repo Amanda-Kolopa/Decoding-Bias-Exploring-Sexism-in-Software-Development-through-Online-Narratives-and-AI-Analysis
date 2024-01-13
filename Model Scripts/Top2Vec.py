@@ -152,7 +152,7 @@ df = pd.read_csv(
 
 ############################# Experiment Time #############################
 
-vectorizer = CountVectorizer(stop_words='english', vocabulary=categories['testimonial injustice'])
+vectorizer = TfidfVectorizer(stop_words='english', vocabulary=categories['testimonial injustice'])
 
 X = df['Text'].apply(clean_text)
 

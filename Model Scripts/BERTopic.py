@@ -8,6 +8,7 @@ from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
 from gap_statistic import OptimalK
+from sklearn.metrics.pairwise import cosine_similarity
 from textblob import TextBlob
 from transformers import pipeline
 import pandas as pd
@@ -152,15 +153,15 @@ df = pd.read_csv(
 ############################# Experiment Time #############################
 
 # Create a CountVectorizer object to generate word embeddings using keywords!
-vectorizer = CountVectorizer(stop_words='english', vocabulary=categories['testimonial injustice'])
+vectorizer = TfidfVectorizer(stop_words='english', vocabulary=categories['testimonial injustice'])
 
 # X = [str(d) for d in df['Text'].apply(clean_text)]
 
 # cleaned_text = df['Text'].apply(clean_text)
-X = df['Text'].apply(clean_text)
+X = df['Text'] #.apply(clean_text)
 
 # Generate the document-term matrix
-X_vec = vectorizer.fit_transform(X)
+# X_vec = vectorizer.fit_transform(X)
 
 # print(X)
 
@@ -217,47 +218,23 @@ X_vec = vectorizer.fit_transform(X)
 # plt.ylabel('Davies-Bouldin Score')
 # plt.show()
 
+new_df = pd.DataFrame({'Text': df['Text']})
 
-# Add the cluster labels to the original DataFrame
-kmeans = KMeans(n_clusters=25, max_iter=1000).fit(X_vec)
-
-# Extract the top 5 words for each cluster
-order_centroids = kmeans.cluster_centers_.argsort()[:, ::-1]
-terms = vectorizer.get_feature_names_out()
-top_words = []
-for i in range(25):
-    top_words.append([terms[ind] for ind in order_centroids[i, :5]])
-
-# Apply Bertopic to extract topics from the text data
-bertopic_model = BERTopic(language="english", n_gram_range=(1, 1), nr_topics=25, top_n_words=5, vectorizer_model=vectorizer)
-topics, _ = bertopic_model.fit_transform(X)
-
-# Extract the top 5 words for each topic
-# order_topics = lda.components_.argsort()[:, ::-1]
-# top_topics = []
-# for i in range(25):
-#     top_topics.append([terms[ind] for ind in order_topics[i, :5]])
-
-# Create a new DataFrame with the same format as the original DataFrame, but with the Cluster ID and Topic ID columns added
-new_df = pd.DataFrame({'Text': df['Text'], 'New Cleaned Text': X, 'Cluster ID': kmeans.labels_})
-
-# Merge the new DataFrame with the original DataFrame on the 'Text' column
 merged_df = pd.merge(df, new_df, on='Text')
 
-# Extract the top 5 topics for each cluster
-cluster_topics = []
-for i in range(25):
-    cluster_df = merged_df[merged_df['Cluster ID'] == i]
-    cluster_X = vectorizer.transform(cluster_df['Cleaned Text'])
-    cluster_bertopic = bertopic_model.transform(X)
-    order_cluster_topics = bertopic_model.get_topic(i)
-    # top_cluster_topics = [terms[ind] for ind in order_cluster_topics]
-    # top_cluster_topics.append([terms[ind] for ind in order_cluster_topics])
-    cluster_topics.append(order_cluster_topics)
+# Train the BERTopic model
+bertopic_model = BERTopic(language="english", n_gram_range=(1, 1), nr_topics=25, top_n_words=5)
+topics, _ = bertopic_model.fit_transform(X)
 
-# Add the top 5 words for each cluster to the merged DataFrame
-for i in range(25):
-    merged_df.loc[merged_df['Cluster ID'] == i, 'Top Words'] = ', '.join(top_words[i])
+# Get the top 5 words for each topic
+top_words = bertopic_model.get_topic_info()
 
+# Create a new DataFrame with the additional column
+output_df = df.copy()
+output_df['Top 5 Words'] = [', '.join(top_words[top_words['Topic'] == topic].values[:5]) for topic in topics]
+
+# Save the DataFrame to a CSV file with the same format as df
+output_df.to_csv('C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/Model Scripts/Outputs/TEST-BERTopic - TI.csv',
+                         index=False)
 # Save the merged DataFrame to a new CSV file
-merged_df.to_csv('C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/Model Scripts/Outputs/BERTopic - TI.csv', index=False)
+# df.to_csv('C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/Model Scripts/Outputs/TEST-BERTopic - TI.csv', index=False)
