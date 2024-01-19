@@ -159,10 +159,10 @@ df = pd.read_csv(
 # Create a TfidfVectorizer object to generate word embeddings using keywords!
 vectorizer_t = TfidfVectorizer(stop_words='english')
 
-temp_df = df.loc[:, ['Post Title']].drop_duplicates()
-cleaned_text_t = temp_df['Post Title'].apply(clean_text)
+temp_df = df.loc[:, ['Post Title']]
+temp_df = temp_df.drop_duplicates(subset=['Post Title']).reset_index(drop=True)
 
-print(len(cleaned_text_t))
+cleaned_text_t = temp_df['Post Title'].apply(clean_text)
 
 # Generate the document-term matrix
 Xt = vectorizer_t.fit_transform(cleaned_text_t)
@@ -174,32 +174,24 @@ lda_t.fit(Xt)
 lda_topic_matrix_t = lda_t.transform(Xt)
 assigned_topics = lda_topic_matrix_t.argmax(axis=1)
 
-# Step 3: Extract top topic for each document
-# temp_df['Top Topic using Post Title'] = ''
-# temp_df['Probability using Post Title'] = ''
-
 feature_names_t = np.array(vectorizer_t.get_feature_names_out())
 
-# TODO: fix logic of assigning words+probabilities to each Post Title
-# Currently: loops 600 times and assigns it's results incrementally (incorrect assignment)
-# Expected: maps the results using the cleaned_text_t index for each corresponding Post Title in df
-
-columns = ['Topic Index', 'Top Topics using Post Title', 'Probability using Post Title']
+columns = ['Post Title', 'Top Topics using Post Title', 'Probability using Post Title']
 topics_df = pd.DataFrame(columns=columns)
 
-for i in range(6):
+for i in temp_df.index:
     top_topic_index_t = np.argmax(lda_topic_matrix_t[i])
     top_topic_probability_t = lda_topic_matrix_t[i, top_topic_index_t]
     top_topic_words_t = [feature_names_t[j] for j in lda_t.components_[top_topic_index_t].argsort()[-5:][::-1]]
 
-    row = {'Topic Index': i,
+    row = {'Post Title': temp_df.loc[i, 'Post Title'],
            'Top Topics using Post Title': ', '.join(top_topic_words_t),
            'Probability using Post Title': top_topic_probability_t}
     topics_df = topics_df._append(row, ignore_index=True)
 
 result_df = pd.DataFrame({'Post Title': temp_df['Post Title'], 'Topic Index': assigned_topics + 1})
 
-result_df = result_df.merge(topics_df, on='Topic Index')
+result_df = result_df.merge(topics_df, on='Post Title')
 df = df.merge(result_df, on='Post Title')
 del df['Topic Index']
 print(df)
