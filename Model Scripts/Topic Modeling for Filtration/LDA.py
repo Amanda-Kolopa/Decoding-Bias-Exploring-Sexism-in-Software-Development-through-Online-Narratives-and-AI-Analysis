@@ -7,12 +7,15 @@
 import re
 
 import numpy as np
+from gensim.corpora import Dictionary
+from gensim.models import CoherenceModel
 from matplotlib import pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
 from gap_statistic import OptimalK
+from sklearn.metrics.pairwise import cosine_similarity
 from textblob import TextBlob
 from transformers import pipeline
 import pandas as pd
@@ -176,7 +179,13 @@ assigned_topics = lda_topic_matrix_t.argmax(axis=1)
 
 feature_names_t = np.array(vectorizer_t.get_feature_names_out())
 
-columns = ['Post Title', 'Top Topics using Post Title', 'Probability using Post Title']
+columns = ['Post Title',
+           'Top Topic using Post Title - Word 1',
+           'Top Topic using Post Title - Word 2',
+           'Top Topic using Post Title - Word 3',
+           'Top Topic using Post Title - Word 4',
+           'Top Topic using Post Title - Word 5',
+           'Probability using Post Title']
 topics_df = pd.DataFrame(columns=columns)
 
 for i in temp_df.index:
@@ -185,7 +194,11 @@ for i in temp_df.index:
     top_topic_words_t = [feature_names_t[j] for j in lda_t.components_[top_topic_index_t].argsort()[-5:][::-1]]
 
     row = {'Post Title': temp_df.loc[i, 'Post Title'],
-           'Top Topics using Post Title': ', '.join(top_topic_words_t),
+           'Top Topic using Post Title - Word 1': top_topic_words_t[0],
+           'Top Topic using Post Title - Word 2': top_topic_words_t[1],
+           'Top Topic using Post Title - Word 3': top_topic_words_t[2],
+           'Top Topic using Post Title - Word 4': top_topic_words_t[3],
+           'Top Topic using Post Title - Word 5': top_topic_words_t[4],
            'Probability using Post Title': top_topic_probability_t}
     topics_df = topics_df._append(row, ignore_index=True)
 
@@ -212,21 +225,25 @@ lda_v.fit(Xv)
 
 lda_topic_matrix_v = lda_v.fit_transform(Xv)
 
-# Step 3: Extract top topic for each document
-df['Top Topic using Vocabulary'] = ''
-df['Probability using Vocabulary'] = ''
+# Create new columns for top topics and probabilities
+for i in range(3):
+    df[f'Top Topic {i+1} using Vocabulary'] = ''
+    df[f'Probability {i+1} using Vocabulary'] = ''
 
 feature_names_v = vectorizer_v.get_feature_names_out()
 
 for i in range(len(df)):
-    top_topic_index_v = np.argmax(lda_topic_matrix_v[i])
-    top_topic_probability_v = lda_topic_matrix_v[i, top_topic_index_v]
+    # Get the top 3 topics and their probabilities
+    top_topic_indices_v = np.argsort(lda_topic_matrix_v[i])[-3:][::-1]
+    top_topic_probabilities_v = lda_topic_matrix_v[i, top_topic_indices_v]
 
-    # Get the top words for the selected topic
-    top_topic_words_v = [feature_names_v[j] for j in lda_v.components_[top_topic_index_v].argsort()[-5:][::-1]]
+    # Get the top word for each selected topic
+    for j, top_topic_index_v in enumerate(top_topic_indices_v):
+        top_topic_words_v = [feature_names_v[k] for k in lda_v.components_[top_topic_index_v].argsort()[-1:][::-1]]
 
-    df.at[i, 'Top Topic using Vocabulary'] = ', '.join(top_topic_words_v)
-    df.at[i, 'Probability using Vocabulary'] = top_topic_probability_v
+        # Store the top topic and probability in separate columns
+        df.at[i, f'Top Topic {j + 1} using Vocabulary'] = ', '.join(top_topic_words_v)
+        df.at[i, f'Probability {j + 1} using Vocabulary'] = top_topic_probabilities_v[j]
 
 print(df)
 
@@ -241,26 +258,30 @@ cleaned_text_d = df['Text'].apply(clean_text)
 Xd = vectorizer_d.fit_transform(cleaned_text_d)
 
 # Apply LDA to extract topics from the text data
-lda_d = LatentDirichletAllocation(n_components=25, random_state=42)
+lda_d = LatentDirichletAllocation(n_components=20, random_state=42)
 lda_topic_matrix_d = lda_d.fit_transform(Xd)
 
-# Step 3: Extract top topic for each document
-df['Top Topic using Dataset'] = ''
-df['Probability using Dataset'] = ''
+# Create new columns for top topics and probabilities
+for i in range(3):
+    df[f'Top Topic {i+1} using Dataset'] = ''
+    df[f'Probability {i+1} using Dataset'] = ''
 
 feature_names_d = vectorizer_d.get_feature_names_out()
 
 for i in range(len(df)):
-    top_topic_index_d = np.argmax(lda_topic_matrix_d[i])
-    top_topic_probability_d = lda_topic_matrix_d[i, top_topic_index_d]
+    # Get the top 3 topics and their probabilities
+    top_topic_indices_d = np.argsort(lda_topic_matrix_d[i])[-3:][::-1]
+    top_topic_probabilities_d = lda_topic_matrix_d[i, top_topic_indices_d]
 
-    # Get the top words for the selected topic
-    top_topic_words_d = [feature_names_d[j] for j in lda_d.components_[top_topic_index_d].argsort()[-5:][::-1]]
+    # Get the top 3 words for each selected topic
+    for j, top_topic_index_d in enumerate(top_topic_indices_d):
+        top_topic_words_d = [feature_names_d[k] for k in lda_d.components_[top_topic_index_d].argsort()[-1:][::-1]]
 
-    df.at[i, 'Top Topic using Dataset'] = ', '.join(top_topic_words_d)
-    df.at[i, 'Probability using Dataset'] = top_topic_probability_d
+        # Store the top topic and probability in separate columns
+        df.at[i, f'Top Topic {j + 1} using Dataset'] = ', '.join(top_topic_words_d)
+        df.at[i, f'Probability {j + 1} using Dataset'] = top_topic_probabilities_d[j]
 
 print(df)
 
 # Save the merged DataFrame to a new CSV file
-df.to_csv('C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/Model Scripts/Topic Modeling for Filtration/LDA - TI.csv', index=False)
+df.to_csv('C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/Model Scripts/Topic Modeling for Filtration/NEW LDA - TI.csv', index=False)
