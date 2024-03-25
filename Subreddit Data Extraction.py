@@ -16,11 +16,11 @@ import os
 # Use this link to get appropriate information to run following script: https://www.honchosearch.com/blog/seo/how-to-use-praw-and-crawl-reddit-for-subreddit-post-data/
 # TODO: Fill in the blanks as required
 reddit = praw.Reddit(
-    client_id="5_BSfXajkZuIosfiDHJtZw",
-    client_secret="b-C6YATBvugw_u75y3YSPRw6B-aznQ",
-    password="9P-H$TbDc97tP!e",
-    user_agent="AK_data_scrape/0.0.1",
-    username="Desperate_Cell_2377"
+    client_id="",
+    client_secret="",
+    password="",
+    user_agent="",
+    username=""
 )
 
 # Built a dictionary containing relevant keywords per category (this is specific for my thesis)
