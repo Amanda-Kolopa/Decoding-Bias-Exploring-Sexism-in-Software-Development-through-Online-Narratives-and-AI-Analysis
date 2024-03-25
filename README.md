@@ -25,5 +25,5 @@ To use the paper's source code, begin by modifying the Subreddit Data Extraction
 </pre>
 
 Once the data extraction process is complete:
-1. Run the Semantic Similarity: Women Software Developers' Experiences of Sexism script to locate potential data points containing narratives of sexist experiences.
-2. Based on the cosine distribution of the previous script, set an appropriate cosine distance threshold in the Semantic Similarity: Taxonomy Definition script. Then, runt the script to classify the data points using the taxonomy definitions.
+1. Run the Semantic Similarity - Women Software Developers' Experiences of Sexism script to locate potential data points containing narratives of sexist experiences.
+2. Based on the cosine distribution of the previous script, set an appropriate cosine distance threshold in the Semantic Similarity - Taxonomy Definition script. Then, runt the script to classify the data points using the taxonomy definitions.
