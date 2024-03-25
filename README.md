@@ -6,11 +6,14 @@ The structure of the repository is as follows:
 
 ## Index
 1. Archive
-2. Subreddit Data Extraction
-3. Semantic Similarity
+2. In Progress
+3. Clean text data files
+4. Data files
+5. LICENSE
+6. Subreddit Data Extraction
+7. Semantic Similarity
    - Women Software Developers' Experiences of Sexism
    - Taxonomy Definitions
-4. License
 
 ## Useage
 To use the paper's source code, begin by modifying the Subreddit Data Extraction script with your Reddit account's information.
