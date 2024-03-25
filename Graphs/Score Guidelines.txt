@@ -1,7 +1,0 @@
-Calinski-Harabas: the higher the score, the better the clustering performance
-
-Davies-Bouldin: the lower the score, the better the clustering performance
-
-Silhouette Method: A score of 1 means each data point is unlikely to be assigned to another cluster, while a score close to 0 means each data point could be easily assigned to another cluster. A score close to -1 means the datapoint is misclassified
-
-SSE Elbow: look for bend in the graph (i.e., elbow)

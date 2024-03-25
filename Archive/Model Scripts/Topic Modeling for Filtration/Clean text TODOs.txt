@@ -1,0 +1,40 @@
+Replace:
+
+â€™ with '
+â€œ with open-quote
+â€ with close-quote
+ðŸ˜ with 
+ðŸ˜¬ with 
+&#x200B; with 
+â€¦ with .
+Â«Â with "
+Â Â» with "
+Ã© with é
+ðŸ˜Š with 
+âœ¨ with 
+ðŸ™ with
+â˜ºï¸ with 
+** with 
+* with 
+ðŸ˜¥ with 
+2&#37; with %
+
+any trailing ,,
+
+
+Abreviations
+lol = remove
+lmao = remove
+YTA = you're the asshole
+NTA = not the asshole
+YMMV = 
+SWE = software engineer
+eng = engineer
+TL;DR = too long; didn't read
+PTO = Personal time off
+btw = by the way
+IMO = in my opinion
+AH = asshole
+DSA = data structures and algorithms
+CTCI = 
+
