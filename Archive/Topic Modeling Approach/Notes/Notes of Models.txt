@@ -1,0 +1,49 @@
+Notes of Models to Compare/Implement
+
+Aspects to consider:
+	- Can we trace and analyze how the model produced the output?
+	- We need to consider a similar metric (Elbow, Silhouette, etc.)
+
+
+
+- TFIDF+Kmeans+LDA without keywords guidance (just applied to text) 
+	- Traditional approach used in several papers
+	- [DONE in A3]
+
+- TFIDF+Kmeans+LDA with keywords guidance (use vectorized keywords to help relationship)
+	- Traditional approach used in several papers
+	- [DONE in A5]
+
+- TFIDF+Kmeans+CTM without keywords guidance (just applied to text)
+	- Traditional approach used in several papers
+	- CMT is an extension of LDA (could compare potential improvements)
+
+- TFIDF+Bottom-Up Hierarchical Clustering+LDA without keywords guidance (just applied to text) [DONE]
+	- Traditional approach used in several papers
+	- 
+
+- TFIDF+Bottom-Up Hierarchical Clustering+CTM without keywords guidance (just applied to text)
+	- Traditional approach used in several papers
+	- CMT is an extension of LDA (could compare potential improvements)
+
+
+- IDF-Smooth+Kmeans+LDA with keyword guidance (use vectorized keywords to help relationship)
+	- Would need to see if this is possible (maybe it's novel)
+	- IDF-Smooth helps when the keyword is not in corpus
+
+- IDF-Smooth+Kmeans+LDA with keyword guidance (use vectorized keywords to help relationship)
+	- Traditional approach used in several papers
+
+
+
+Extra Ideas:
+
+- BERTopic (find which models to use)
+	- Official paper: https://arxiv.org/abs/2203.05794
+	- Research Paper(s) that used it: https://link.springer.com/article/10.1007/s41870-023-01268-w
+	- Has various models to try out
+
+- Top2Vec (find which models to use)
+	- Official paper: https://arxiv.org/abs/2008.09470
+	- Research paper(s) that use it:
+	- Has various models to try out

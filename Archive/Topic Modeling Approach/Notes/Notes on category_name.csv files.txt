@@ -1,0 +1,26 @@
+social dominance penalty.csv
+	- Ran Kmeans with tfidf with 5 clusters
+	- Based on reviewing topic titles, text seems to be contextually relative! 
+		- cluster 2 discusses women's experiences and concerns in the field
+		- cluster 4 discusses derogatory 'speech' (what was said to women in the field)
+
+
+
+
+
+General Data Notes:
+	- Not all posters/commenters are women software developers (male engineers, STEM majors, students, parents, etc.). Maybe we find a way to extract women experiences
+		- "I'm a woman ___ (could include age, ethnicity, education)"
+		- "I (70F) [...]"
+		- "I am also a female engineer [...]"
+		- "I had recently at work as a young female SWE"
+		- "I am a young female (24) working in a junior dev role"
+
+	- Look into ways to incorporate the title in the NLP process
+		- matching similar texts = use title as a guideline to context!
+
+	- Titles that start with [Vent], (Vent), [Rant], (Rant) provide good experiences for the categories
+
+
+Data Notes:
+	- A lot of women in software dev teams feel they don't belong (imposter syndrome)
