@@ -25,9 +25,9 @@ categories = ['feminine-coded goods and services',
 
 definitions = {
     'women software developers experiences':
-        "As a woman software engineer, I’ve faced challenging "
-        "situations while collaborating with colleagues in my teams. These include encountering sexism, navigating "
-        "a hostile environment, and receiving unequal treatment.",
+        "As a female software engineer, woman in tech, and women software developer, I’ve faced challenging "
+        "situations while collaborating with colleagues in my teams. These include encountering sexism and navigating "
+        "a hostile environment.",
 }
 
 def clean_text(text):
