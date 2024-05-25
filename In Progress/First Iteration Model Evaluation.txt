@@ -1,0 +1,34 @@
+Our contribution/topics of focus:
+
+ - Explain examples where AI causes social issues (bias towards credit applications, etc.)
+   - already deployed AI in our society
+   - societal impacts of AI
+ - Built ethical framework (sexism taxonomy) so that the AI model and data better reflects reality
+ - Evaluate the technology using a team of EDI experts to ensure the AI aligns with reality
+
+
+
+
+
+Model vs Majority EDI Results vs At Least One Human Label
+
+1. GSP vs FCGS vs NO
+2. SDP vs GSP (contains an other response) vs YES (1 person)
+3. TI vs TI vs YES (3 people)
+4. GSP vs GSP (contains an other response) vs YES (2 people)
+5. FCGS vs FCGS vs YES (2 people)
+6. FCGS vs GSP vs NO
+7. GSP vs FCGS vs NO
+8. FCGS vs GSP vs YES (1 person)
+9. FCGS vs TI vs YES (1 person)
+10. FCGS vs FCGS vs YES (3 people)
+11. TI vs SDP vs YES (1 person)
+12. TI vs TI vs YES (3 people)
+13. SDP vs TI vs NO
+14. TI vs FCGS (contains other response) vs NO
+15. SDP vs FCGS (contains other response) vs NO
+16. TI vs FCGS (contains other response) vs NO
+17. TI vs GSP vs YES (1 person)
+18. SDP vs SDP vs YES (3 people)
+19. TI vs GSP vs NO
+20. TI vs FCGS vs NO

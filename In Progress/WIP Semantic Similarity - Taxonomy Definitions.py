@@ -100,10 +100,42 @@ definitions_embeddings = []
 for key, value in definitions.items():
     definitions_embeddings.append(model.encode(value, convert_to_tensor=True))
 
-############################# Data Embedding #############################
-threshold_df['Cleaned Text'] = threshold_df['Text'].apply(clean_text)
+############################# Data Embedding using Sentences #############################
+#threshold_df['Text per Paragraph'] = threshold_df['Text'].apply(nltk.sent_tokenize)
+threshold_df['Text per Paragraph'] = threshold_df['Text'].apply(lambda text: text.split('\n\n'))
 
-text_data = threshold_df['Cleaned Text'].tolist()
+new_rows = []
+for index, row in threshold_df.iterrows():
+    paragraphs = row['Text per Paragraph']
+    for paragraph_index, paragraph in enumerate(paragraphs):
+        new_row = {
+            'SubReddit': row['SubReddit'],
+            'Hot/Top/New': row['Hot/Top/New'],
+            'Scraped Date': row['Scraped Date'],
+            'Posted Date': row['Posted Date'],
+            'Posted by': row['Posted by'],
+            'Post or Comment': row['Post or Comment'],
+            'Post Title': row['Post Title'],
+            'ID': row['ID'],
+            'Text': row['Text'],
+            'Text Length': row['Text Length'],
+            'Potential Category using Static Keyword Extraction': row['Potential Category using Static Keyword Extraction'],
+            'Paragraph': paragraph.strip(),
+            'Cleaned Text': clean_text(paragraph.strip()),
+            'WSDE': row['WSDE'],
+            'WSDE Cosine Similarity': row['WSDE Cosine Similarity'],
+            'Label': row['Label']
+        }
+        new_rows.append(new_row)
+        print(f"Processed paragraph {paragraph_index + 1} for row {index}")
+
+# Create the new DataFrame
+threshold_paragraph_df = pd.DataFrame(new_rows)
+
+
+# threshold_df['Cleaned Text'] = threshold_df['Text per Sentence'].apply(clean_text)
+
+text_data = threshold_paragraph_df['Cleaned Text'].tolist()
 data_embeddings = model.encode(text_data, convert_to_tensor=True)
 
 ############################# Distances per Category #############################
@@ -127,8 +159,8 @@ for i, row in enumerate(distances):
     closest_definitions.append(closest_definition)
     closest_definition_scores.append(closest_definition_score)
 
-threshold_df['Taxonomy Category by SS'] = closest_definitions
-threshold_df['Taxonomy Category - Cosine Similarity'] = closest_definition_scores
+threshold_paragraph_df['Taxonomy Category by SS'] = closest_definitions
+threshold_paragraph_df['Taxonomy Category - Cosine Similarity'] = closest_definition_scores
 
-threshold_df.to_csv('C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/In Progress/Taxonomy '
-          'Definitions with Examples - Second Phase.csv', index=False)
+threshold_paragraph_df.to_csv('C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/In Progress/Taxonomy '
+          'Definitions with Examples and Text per Paragraph - Second Phase.csv', index=False)
