@@ -16,8 +16,10 @@ from sklearn.metrics.pairwise import cosine_similarity
 nltk.download('stopwords')
 nltk.download('averaged_perceptron_tagger')
 
+# TODO: rename keys back to categories:
+# 1=FCGS, 2=GSP, 3=TI, 4=SDP
 definitions = {
-    'feminine-coded goods and services':
+    '1':
         "The experiences when women software developers are expected to naturally provide to men because they are "
         "entitled to receive the benefits of women’s goods and services. Moreover, these characteristics are used to "
         "reinforce traditional gender roles. For example, care-mongering is when women are disproportionately "
@@ -25,21 +27,21 @@ definitions = {
         "I am the only woman in our dev team and I am always implicitly expected to do the administrative tasks "
         "during our meetings. When I confront my team about this, they explain that my organization and note-taking "
         "abilities are a natural talent that benefits the team.",
-    'gendered split perception':
+    '2':
         "Women software developers experience harsher judgement when performing the same actions as their male "
         "counterparts even though they have done nothing wrong in moral and social reality. Women may be subject to "
         "moral suspicion and consternation for violating edits of the patriarchal rule book. For example, as a female "
         "software engineer, I feel like my source code is heavily scrutinized by my male teammates. When I submit "
         "similar work as my male co-workers, I tend to receive more critiques compared to my colleagues despite our "
         "work being identical in logic and performance.",
-    'testimonial injustice':
+    '3':
         "Arises due to systematic biases that afflict women software developers as a social group that has "
         "historically been and to some extent remains unjustly socially subordinate. The group members experiences "
         "challenges as being regarded as less credible when making claims about certain matters, or against certain "
-        "people, hence being denied the epistemic status of knowers. For example, I am a woman software developer. I "
+        "people, hence being denied the epistemic status of knowers For example, I am a woman software developer. I "
         "find that when I present an ideas to my development team, they often ignore my input. However, when my male "
         "colleague repeats the same ideas in a follow-up meeting, the team almost immediately accepts them.",
-    'social dominance penalty':
+    '4':
         "People are (often unwittingly) motivated to maintain gender hierarchies by applying social penalties to "
         "women software developers who compete for, or otherwise threaten to advance to, high-status, masculine-coded "
         "positions. This is experienced when women in such positions who are agentic are perceived as extreme in "
@@ -95,12 +97,13 @@ threshold_df = df[1 - df['WSDE Cosine Similarity'] <= threshold]
 
 ############################# Definitions Embedding #############################
 model = SentenceTransformer('all-mpnet-base-v2')
+# model = SentenceTransformer("WSDE_model")
 
 definitions_embeddings = []
 for key, value in definitions.items():
     definitions_embeddings.append(model.encode(value, convert_to_tensor=True))
 
-############################# Data Embedding using Sentences #############################
+############################# Data Embedding using Paragraphs #############################
 #threshold_df['Text per Paragraph'] = threshold_df['Text'].apply(nltk.sent_tokenize)
 threshold_df['Text per Paragraph'] = threshold_df['Text'].apply(lambda text: text.split('\n\n'))
 
@@ -131,36 +134,38 @@ for index, row in threshold_df.iterrows():
 
 # Create the new DataFrame
 threshold_paragraph_df = pd.DataFrame(new_rows)
-
-
-# threshold_df['Cleaned Text'] = threshold_df['Text per Sentence'].apply(clean_text)
-
 text_data = threshold_paragraph_df['Cleaned Text'].tolist()
-data_embeddings = model.encode(text_data, convert_to_tensor=True)
+
+# TODO: remove after compilation and revert to text_data
+old_text_data = threshold_df['Text'].apply(clean_text).tolist()
+
+data_embeddings = model.encode(old_text_data, convert_to_tensor=True)
 
 ############################# Distances per Category #############################
-distances = []
-for data_embedding in data_embeddings:
-    data_embedding = data_embedding.unsqueeze(0)
-    data_distances = cosine_similarity(data_embedding.numpy(), definitions_embeddings)
-    distances.append(data_distances)
+# distances = []
+# for data_embedding in data_embeddings:
+#     data_embedding = data_embedding.unsqueeze(0)
+#     data_distances = cosine_similarity(data_embedding.numpy(), definitions_embeddings)
+#     distances.append(data_distances)
+#
+# distances = np.array(distances)
+# closest_definition_index = np.argmax(distances, axis=1)
+#
+# closest_definitions = []
+# closest_definition_scores = []
+#
+# # Find the closest definition for each sample
+# for i, row in enumerate(distances):
+#     closest_definition_index = np.argmax(row)
+#     closest_definition_score = row[0][closest_definition_index].item()
+#     closest_definition = list(definitions.keys())[closest_definition_index]
+#     closest_definitions.append(closest_definition)
+#     closest_definition_scores.append(closest_definition_score)
 
-distances = np.array(distances)
-closest_definition_index = np.argmax(distances, axis=1)
+# threshold_paragraph_df['Taxonomy Category by SS'] = closest_definitions
+# threshold_paragraph_df['Taxonomy Category - Cosine Similarity'] = closest_definition_scores
 
-closest_definitions = []
-closest_definition_scores = []
+model.save("taxonomy_model_FULL_TEXT")
 
-# Find the closest definition for each sample
-for i, row in enumerate(distances):
-    closest_definition_index = np.argmax(row)
-    closest_definition_score = row[0][closest_definition_index].item()
-    closest_definition = list(definitions.keys())[closest_definition_index]
-    closest_definitions.append(closest_definition)
-    closest_definition_scores.append(closest_definition_score)
-
-threshold_paragraph_df['Taxonomy Category by SS'] = closest_definitions
-threshold_paragraph_df['Taxonomy Category - Cosine Similarity'] = closest_definition_scores
-
-threshold_paragraph_df.to_csv('C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/In Progress/Taxonomy '
-          'Definitions with Examples and Text per Paragraph - Second Phase.csv', index=False)
+# threshold_paragraph_df.to_csv('C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/In Progress/Taxonomy '
+#           'One Model - Definitions and Text per Paragraph.csv', index=False)

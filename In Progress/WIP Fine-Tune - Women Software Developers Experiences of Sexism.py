@@ -432,5 +432,7 @@ plt.ylabel('Frequency')
 plt.title('Distribution of Cosine Distances')
 plt.show()
 
+model.save("WSDE_model")
+
 df.to_csv('C:/Users/amand/OneDrive/Desktop/Thesis/Updated_Thesis/In Progress/'
           'SE4AI - WSDE FT Output.csv', index=False)
