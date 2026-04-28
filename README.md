@@ -15,7 +15,7 @@ The structure of the repository is as follows:
    - Women Software Developers' Experiences of Sexism
    - Taxonomy Definitions
 
-## Useage
+## Usage
 To use the paper's source code, begin by modifying the Subreddit Data Extraction script with your Reddit account's information.
 <pre>
   <code>reddit = praw.Reddit(
